@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Meme Generator</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            animation: backgroundBlink 2s infinite;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #000000;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px #ff6f61;
+            animation: glowingText 2s infinite;
+        }
+
+        section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input, button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        input[type="url"], input[type="text"] {
+            background-color: #333333;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        button {
+            background-color: #ff6f61;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff4d4d;
+        }
+
+        #memePreview {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            border: 2px solid #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #333333;
+        }
+
+        #memeImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        #memeTopText, #memeBottomText {
+            position: absolute;
+            color: #ffffff;
+            font-size: 2rem;
+            text-shadow: 2px 2px 5px #000000;
+            width: 100%;
+            text-align: center;
+            white-space: normal;
+            overflow-wrap: break-word;
+            pointer-events: none;
+            box-sizing: border-box;
+        }
+
+        #memeTopText {
+            top: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #memeBottomText {
+            bottom: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #000000;
+            margin-top: auto;
+            box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.5);
+            animation: footerAnimation 4s infinite;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        footer a {
+            color: #ff6f61;
+            text-decoration: none;
+        }
+
+        .slider-container, .color-container, .font-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-label, .color-label, .font-label {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .font-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        @keyframes backgroundBlink {
+            0%, 100% { background: linear-gradient(to right, #0f2027, #203a43, #2c5364); }
+            50% { background: linear-gradient(to right, #2c5364, #203a43, #0f2027); }
+        }
+
+        @keyframes glowingText {
+            0% { text-shadow: 0 0 5px #ff6f61, 0 0 10px #ff6f61, 0 0 15px #ff6f61, 0 0 20px #ff6f61, 0 0 25px #ff6f61, 0 0 30px #ff6f61, 0 0 35px #ff6f61; }
+            50% { text-shadow: 0 0 10px #ff6f61, 0 0 20px #ff6f61, 0 0 30px #ff6f61, 0 0 40px #ff6f61, 0 0 50px #ff6f61, 0 0 60px #ff6f61, 0 0 70px #ff6f61; }
+            100% { text-shadow: 0 0 5px #ff6f61, 0 0 10px #ff6f61, 0 0 15px #ff6f61, 0 0 20px #ff6f61, 0 0 25px #ff6f61, 0 0 30px #ff6f61, 0 0 35px #ff6f61; }
+        }
+
+        @keyframes footerAnimation {
+            0% { background-color: #000000; }
+            50% { background-color: #333333; }
+            100% { background-color: #000000; }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            section {
+                flex-direction: column;
+                align-items: center;
+            }
+            #memePreview {
+                height: 300px;
+            }
+            #memeTopText, #memeBottomText {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Meme Generator</h1>
+    </header>
+
+    <!-- Meme Generator Section -->
+    <section>
+        <div style="flex: 1; max-width: 500px;">
+            <h2>Create Your Meme</h2>
+            <form id="memeForm">
+                <input type="file" id="imageUpload" />
+                <input type="url" id="imageUrl" placeholder="Or enter image URL" />
+                <input type="text" id="topText" placeholder="Top Text" />
+                <input type="text" id="bottomText" placeholder="Bottom Text" />
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <label for="topTextSize">Top Text Size:</label>
+                        <span id="topTextSizeValue">30px</span>
+                    </div>
+                    <input type="range" id="topTextSize" min="10" max="100" value="30" oninput="updateTextSize('top', this.value)">
+                    
+                    <div class="slider-label">
+                        <label for="bottomTextSize">Bottom Text Size:</label>
+                        <span id="bottomTextSizeValue">30px</span>
+                    </div>
+                    <input type="range" id="bottomTextSize" min="10" max="100" value="30" oninput="updateTextSize('bottom', this.value)">
+                </div>
+
+                <div class="color-container">
+                    <div class="color-label">
+                        <label for="topTextColor">Top Text Color:</label>
+                        <input type="color" id="topTextColor" value="#ffffff" onchange="updateTextColor('top', this.value)">
+                    </div>
+                    <div class="color-label">
+                        <label for="bottomTextColor">Bottom Text Color:</label>
+                        <input type="color" id="bottomTextColor" value="#ffffff" onchange="updateTextColor('bottom', this.value)">
+                    </div>
+                </div>
+
+                <div class="font-container">
+                    <div class="font-label">
+                        <label for="topTextFont">Top Text Font:</label>
+                        <select id="topTextFont" onchange="updateFontStyle('top', this.value)">
+                            <option value="Arial" selected>Arial</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Courier New">Courier New</option>
+                        </select>
+                    </div>
+                    <div class="font-label">
+                        <label for="bottomTextFont">Bottom Text Font:</label>
+                        <select id="bottomTextFont" onchange="updateFontStyle('bottom', this.value)">
+                            <option value="Arial" selected>Arial</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Courier New">Courier New</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="button" onclick="setImageSize()">Set Image to Standard Size</button>
+                <button type="button" onclick="generateMeme()">Generate Meme</button>
+                <button type="button" onclick="downloadMeme()">Download Meme</button>
+            </form>
+        </div>
+
+        <div id="memePreview">
+            <img id="memeImage" alt="Meme Image">
+            <div id="memeTopText">Top Text</div>
+            <div id="memeBottomText">Bottom Text</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Follow me on <a href="https://www.instagram.com/mr.pandey.g/" target="_blank">Instagram</a></p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0/html2canvas.min.js"></script>
+    <script>
+        function generateMeme() {
+            const imageUrl = document.getElementById('imageUrl').value;
+            const imageFile = document.getElementById('imageUpload').files[0];
+            const topText = document.getElementById('topText').value;
+            const bottomText = document.getElementById('bottomText').value;
+
+            const memeImage = document.getElementById('memeImage');
+            const memeTopText = document.getElementById('memeTopText');
+            const memeBottomText = document.getElementById('memeBottomText');
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    memeImage.src = e.target.result;
+                };
+                reader.readAsDataURL(imageFile);
+            } else if (imageUrl) {
+                memeImage.src = imageUrl;
+            } else {
+                alert("Please upload an image or provide a URL.");
+                return;
+            }
+
+            memeTopText.textContent = topText;
+            memeBottomText.textContent = bottomText;
+        }
+
+        function setImageSize() {
+            const memeImage = document.getElementById('memeImage');
+            memeImage.style.width = '100%';
+            memeImage.style.height = '100%';
+            document.getElementById('memePreview').style.width = '500px';
+            document.getElementById('memePreview').style.height = '600px';
+        }
+
+        function updateTextSize(position, size) {
+            const textSize = `${size}px`;
+            if (position === 'top') {
+                document.getElementById('memeTopText').style.fontSize = textSize;
+                document.getElementById('topTextSizeValue').textContent = textSize;
+            } else if (position === 'bottom') {
+                document.getElementById('memeBottomText').style.fontSize = textSize;
+                document.getElementById('bottomTextSizeValue').textContent = textSize;
+            }
+        }
+
+        function updateTextColor(position, color) {
+            if (position === 'top') {
+                document.getElementById('memeTopText').style.color = color;
+            } else if (position === 'bottom') {
+                document.getElementById('memeBottomText').style.color = color;
+            }
+        }
+
+        function updateFontStyle(position, font) {
+            if (position === 'top') {
+                document.getElementById('memeTopText').style.fontFamily = font;
+            } else if (position === 'bottom') {
+                document.getElementById('memeBottomText').style.fontFamily = font;
+            }
+        }
+
+        function downloadMeme() {
+            const memePreview = document.getElementById('memePreview');
+            html2canvas(memePreview).then(function(canvas) {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'meme.png';
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
